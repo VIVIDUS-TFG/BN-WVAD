@@ -23,7 +23,7 @@ particular, the proposed DFM criterion is also discriminative for anomaly recogn
     python main.py --version train --root_dir data_root
 
 ## Inference
-    python infer.py --model_path ./ckpts/xd_best_2022.pkl --root_dir data_root
+    python infer.py --model_path ./ckpts/xd_best.pkl --root_dir data_root
 
 ## Result on XD-Violence
 | Method |    AUC    |   AUC_sub   |     AP    |   AP_sub   |
