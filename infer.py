@@ -12,8 +12,8 @@ import time
 def get_predict(test_loader, net):
     load_iter = iter(test_loader)
     frame_predict = []
-        
-    for i in range(len(test_loader.dataset)//5):
+    
+    if len(test_loader.dataset) == 1: # when there is a file in XD_Test.list
         _data, _label = next(load_iter)
         
         _data = _data.cuda()
@@ -24,6 +24,18 @@ def get_predict(test_loader, net):
 
         fpre_ = np.repeat(a_predict, 16)
         frame_predict.append(fpre_)
+    else: # when in XD_Test.list there are five files (5-crop)
+        for i in range(len(test_loader.dataset)//5):
+            _data, _label = next(load_iter)
+            
+            _data = _data.cuda()
+            _label = _label.cuda()
+            res = net(_data)   
+            
+            a_predict = res.cpu().numpy().mean(0)   
+
+            fpre_ = np.repeat(a_predict, 16)
+            frame_predict.append(fpre_)
 
     frame_predict = np.concatenate(frame_predict, axis=0)
     return frame_predict
