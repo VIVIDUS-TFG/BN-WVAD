@@ -52,7 +52,7 @@ def test(net, test_loader, model_file = None):
         frame_predict = get_predict(test_loader, net)
         pred_binary = [1 if pred_value > 13.5 else 0 for pred_value in frame_predict]
         video_duration = int(np.ceil(len(pred_binary) * 0.96)) # len(pred_binary) = video_duration / 0.96
-        print(pred_binary)
+
         if any(pred == 1 for pred in pred_binary):
             message= "El video contiene violencia. "
             message_second = "Los intervalos con violencia son: "
