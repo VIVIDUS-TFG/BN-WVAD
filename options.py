@@ -6,10 +6,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description = descript)
     parser.add_argument('--len_feature', type = int, default = 1024)
 
-    parser.add_argument('--root_dir', type = str, default = 'xd/')
+    parser.add_argument('--root_dir', type = str, default = 'data_root')
     parser.add_argument('--log_path', type = str, default = 'logs/')
     
-    parser.add_argument('--model_path', type = str, default = 'ckpts/')
+    parser.add_argument('--model_path', type = str, default = './ckpts/xd_best.pkl')
     parser.add_argument('--lr', type = str, default = '[0.0001]*1000', help = 'learning rates for steps(list form)')
     parser.add_argument('--batch_size', type = int, default = 64)
     
