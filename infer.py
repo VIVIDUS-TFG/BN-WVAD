@@ -8,6 +8,7 @@ from models import WSAD
 from dataset_loader import data
 import time
 import csv
+import os
 
 def get_predict(test_loader, net):
     load_iter = iter(test_loader)
@@ -41,7 +42,7 @@ def get_predict(test_loader, net):
     return frame_predict
 
 
-def test(net, test_loader, model_file = None):
+def test(net, test_loader, args, model_file = None):
     st = time.time()
     with torch.no_grad():
         net.eval()
@@ -80,22 +81,27 @@ def test(net, test_loader, model_file = None):
             message_frames = ""            
             message_second = ""            
 
-        # Create a list of dictionaries to store the data
-        data = []
-        data.append({
-            'video_id': "IDVIDEO",
-            'frame_number': pred_binary,
-            "violence_label": "1" if any(pred == 1 for pred in pred_binary) else "0",
-        })
+        if args.evaluate == 'true':
+            # Create a list of dictionaries to store the data
+            data = []
+            data.append({
+                'video_id': "IDVIDEO",
+                'frame_number': [pred for i, pred in enumerate(pred_binary) if i % 16 == 0],
+                "violence_label": "1" if any(pred == 1 for pred in pred_binary) else "0",
+            })
 
-        # Write the data to a CSV file
-        csv_file = 'inference.csv'
+            # Write the data to a CSV file
+            csv_file = 'inference.csv'
 
-        fieldnames = ['video_id', 'frame_number', 'violence_label']
-        with open(csv_file, 'w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(data)
+            fieldnames = ['video_id', 'frame_number', 'violence_label']
+            file_exists = os.path.isfile(csv_file)
+
+            with open(csv_file, 'a', newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                if not file_exists:
+                    writer.writeheader()
+                writer.writerows(data)
+
 
         time_elapsed = time.time() - st
         print(message + message_frames)
@@ -127,4 +133,4 @@ if __name__ == "__main__":
             shuffle = False, num_workers = args.num_workers,
             worker_init_fn = worker_init_fn)
     
-    test(net, test_loader, model_file = args.model_path)
+    test(net, test_loader, args, model_file = args.model_path)
