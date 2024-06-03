@@ -14,7 +14,7 @@ class XDVideo(data.DataLoader):
         self.len_feature = len_feature
         
         self.feature_path = self.data_path
-        split_path = os.path.join("list",'XD_{}.list'.format(self.mode))
+        split_path = os.path.join("list",'rgb_test.list'.format(self.mode))
         split_file = open(split_path, 'r',encoding="utf-8")
         self.vid_list = []
         for line in split_file:

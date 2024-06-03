@@ -23,8 +23,7 @@ def get_predict(test_loader, net):
         
         a_predict = res.cpu().numpy().mean(0)   
 
-        fpre_ = np.repeat(a_predict, 16)
-        frame_predict.append(fpre_)
+        frame_predict.append(a_predict)
     else: # when in XD_Test.list there are five files (5-crop)
         for i in range(len(test_loader.dataset)//5):
             _data, _label = next(load_iter)
@@ -66,12 +65,12 @@ def test(net, test_loader, args, model_file = None):
                         start_idx = i
                 elif start_idx is not None:
                     message_frames += ("[" + str(start_idx) + " - " + str(i - 1) + "]" + ", ") if i-1 != start_idx else ("[" + str(start_idx) + "], ")
-                    message_second += ("[" + parse_time(int(np.floor((start_idx//16 + 1)* 0.96))) + " - " + parse_time(int(np.ceil(i//16 * 0.96))) + "], ")
+                    message_second += ("[" + parse_time(int(np.floor((start_idx + 1)* 0.96))) + " - " + parse_time(int(np.ceil(i * 0.96))) + "], ")
                     start_idx = None
 
             if start_idx is not None:
                 message_frames += ("[" + str(start_idx) + " - " + str(len(pred_binary) - 1) + "]") if len(pred_binary) - 1 != start_idx else ("[" + str(start_idx) + "]")
-                message_second += ("[" + parse_time(int(np.floor((start_idx//16 + 1) * 0.96))) + " - " + parse_time(video_duration) + "]")
+                message_second += ("[" + parse_time(int(np.floor((start_idx + 1) * 0.96))) + " - " + parse_time(video_duration) + "]")
             else:
                 message_frames = message_frames[:-2]              
                 message_second = message_second[:-2]              
@@ -86,7 +85,7 @@ def test(net, test_loader, args, model_file = None):
             data = []
             data.append({
                 'video_id': "IDVIDEO",
-                'frame_number': [pred for i, pred in enumerate(pred_binary) if i % 16 == 0],
+                'frame_number': pred_binary,
                 "violence_label": "1" if any(pred == 1 for pred in pred_binary) else "0",
             })
 
