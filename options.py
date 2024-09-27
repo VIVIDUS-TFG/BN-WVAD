@@ -4,6 +4,7 @@ import os
 def parse_args():
     descript = 'Pytorch Implementation of UR-DMU'
     parser = argparse.ArgumentParser(description = descript)
+    parser.add_argument('--output-path', help = 'output path')
     parser.add_argument('--evaluate', default='false', help='to infer a video or evaluate model metrics: (false or true)')
 
     parser.add_argument('--len_feature', type = int, default = 1024)
