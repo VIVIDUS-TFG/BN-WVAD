@@ -53,8 +53,10 @@ class Attention(nn.Module):
 
         attn1 = self.attend(dots)
 
-        tmp_ones = torch.ones(n).cuda()
-        tmp_n = torch.linspace(1, n, n).cuda()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        tmp_ones = torch.ones(n).to(device)
+        tmp_n = torch.linspace(1, n, n).to(device)
         tg_tmp = torch.abs(tmp_n * tmp_ones - tmp_n.view(-1,1))
         attn2 = torch.exp(-tg_tmp / torch.exp(torch.tensor(1.)))
         attn2 = (attn2 / attn2.sum(-1)).unsqueeze(0).unsqueeze(1).repeat(b,self.heads, 1, 1)

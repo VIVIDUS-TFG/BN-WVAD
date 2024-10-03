@@ -17,8 +17,8 @@ def get_predict(test_loader, net):
     for i in range(len(test_loader.dataset)):
         _data, _label = next(load_iter)
         
-        _data = _data.cuda()
-        _label = _label.cuda()
+        _data = _data.to(device)
+        _label = _label.to(device)
         res = net(_data)   
         
         a_predict = res.cpu().numpy().mean(0)   
@@ -30,12 +30,11 @@ def get_predict(test_loader, net):
 
 
 def test(net, test_loader, args, model_file = None):
-    st = time.time()
     with torch.no_grad():
         net.eval()
         net.flag = "Test"
         if model_file is not None:
-            net.load_state_dict(torch.load(model_file))
+            net.load_state_dict(torch.load(args.model_path, map_location=device))
         
         frame_predict = get_predict(test_loader, net)
         pred_binary = [1 if pred_value > 13.5 else 0 for pred_value in frame_predict]
@@ -61,14 +60,16 @@ if __name__ == "__main__":
     if args.seed >= 0:
         utils.set_seed(args.seed)
         worker_init_fn = np.random.seed(args.seed)
-    net = WSAD(args.len_feature, flag = "Test", args = args)
-    net = net.cuda()
-    test_loader = data.DataLoader(
-        XDVideo(root_dir = args.root_dir, mode = 'Test', num_segments = args.num_segments, len_feature = args.len_feature),
-            batch_size = 1,
-            shuffle = False, num_workers = args.num_workers,
-            worker_init_fn = worker_init_fn)
+    net = WSAD(args.len_feature, flag="Test", args=args)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    net = net.to(device)
     
-    results = test(net, test_loader, args, model_file = args.model_path)
+    test_loader = data.DataLoader(
+        XDVideo(root_dir=args.root_dir, mode='Test', num_segments=args.num_segments, len_feature=args.len_feature),
+        batch_size=1,
+        shuffle=False, num_workers=args.num_workers,
+        worker_init_fn=worker_init_fn
+    )
+    
+    results = test(net, test_loader, args, model_file=args.model_path)
     save_results(results, os.path.join(args.output_path, 'results.npy'))
-
