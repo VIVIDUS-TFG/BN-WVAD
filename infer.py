@@ -34,7 +34,8 @@ def test(net, test_loader, args, model_file = None):
         net.eval()
         net.flag = "Test"
         if model_file is not None:
-            net.load_state_dict(torch.load(args.model_path, map_location=device))
+            net.load_state_dict(torch.load(os.path.join(
+                Path(__file__).resolve().parent, 'ckpts/xd_best.pkl'), map_location=device))
         
         frame_predict = get_predict(test_loader, net)
         pred_binary = [1 if pred_value > 13.5 else 0 for pred_value in frame_predict]
