@@ -3,6 +3,7 @@ import torch.utils.data as data
 import os
 import numpy as np
 import utils 
+from pathlib import Path
 
 class XDVideo(data.DataLoader):
     def __init__(self, root_dir, mode, num_segments, len_feature, seed=-1, is_normal=None):
@@ -14,7 +15,7 @@ class XDVideo(data.DataLoader):
         self.len_feature = len_feature
         
         self.feature_path = self.data_path
-        split_path = os.path.join("list",'rgb_test.list'.format(self.mode))
+        split_path = Path(feature_path)
         split_file = open(split_path, 'r',encoding="utf-8")
         self.vid_list = []
         for line in split_file:
@@ -42,7 +43,7 @@ class XDVideo(data.DataLoader):
         label=0
         if "_label_A" not in vid_name:
             label=1  
-        video_feature = np.load(os.path.join(self.feature_path, vid_name )).astype(np.float32)
+        video_feature = np.load(vid_name).astype(np.float32)
         if self.mode == "Train":
             new_feature = np.zeros((self.num_segments, self.len_feature)).astype(np.float32)
 

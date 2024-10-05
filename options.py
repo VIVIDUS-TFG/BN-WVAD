@@ -9,7 +9,7 @@ def parse_args():
 
     parser.add_argument('--len_feature', type = int, default = 1024)
 
-    parser.add_argument('--root_dir', type = str, default = 'data_root')
+    parser.add_argument('--rgb-list', type = str, default = 'data_root')
     parser.add_argument('--log_path', type = str, default = 'logs/')
     
     parser.add_argument('--model_path', type = str, default = './ckpts/xd_best.pkl')
